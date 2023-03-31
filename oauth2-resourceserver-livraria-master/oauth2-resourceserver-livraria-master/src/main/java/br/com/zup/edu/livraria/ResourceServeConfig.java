@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -37,6 +38,7 @@ public class ResourceServeConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "//api/livros/{id}").hasAuthority(READ)
                 .antMatchers(HttpMethod.GET, "/api/livros/{id}**").hasAuthority(READ)
                 .antMatchers(HttpMethod.POST, "/api/livros/**").hasAuthority(WRITE)
+                .antMatchers(DELETE, "/api/autores/**").hasAuthority(WRITE)
                 .anyRequest()
                 .hasAuthority(WRITE)
             .and()
