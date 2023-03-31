@@ -11,6 +11,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ResourceServeConfig extends WebSecurityConfigurerAdapter {
+    private static final String READ = "SCOPE_livraria:read";
+    private static final String WRITE = "SCOPE_livraria:write";
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -29,14 +31,14 @@ public class ResourceServeConfig extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(STATELESS)
             .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/autores/{id}").hasAuthority("SCOPE_livraria:read")
-                .antMatchers(HttpMethod.GET, "/api/autores/{id}**").hasAuthority("SCOPE_livraria:read")
-                .antMatchers(HttpMethod.POST, "/api/autores/**").hasAuthority("SCOPE_livraria:write")
-                .antMatchers(HttpMethod.GET, "//api/livros/{id}").hasAuthority("SCOPE_livraria:read")
-                .antMatchers(HttpMethod.GET, "/api/livros/{id}**").hasAuthority("SCOPE_livraria:read")
-                .antMatchers(HttpMethod.POST, "/api/livros/**").hasAuthority("SCOPE_livraria:write")
+                .antMatchers(HttpMethod.GET, "/api/autores/{id}").hasAuthority(READ)
+                .antMatchers(HttpMethod.GET, "/api/autores/{id}**").hasAuthority(READ)
+                .antMatchers(HttpMethod.POST, "/api/autores/**").hasAuthority(WRITE)
+                .antMatchers(HttpMethod.GET, "//api/livros/{id}").hasAuthority(READ)
+                .antMatchers(HttpMethod.GET, "/api/livros/{id}**").hasAuthority(READ)
+                .antMatchers(HttpMethod.POST, "/api/livros/**").hasAuthority(WRITE)
                 .anyRequest()
-                .hasAuthority("SCOPE_livraria:write")
+                .hasAuthority(WRITE)
             .and()
                 .oauth2ResourceServer()
                 .jwt();
