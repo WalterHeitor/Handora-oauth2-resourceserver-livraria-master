@@ -6,6 +6,8 @@ import br.com.zup.edu.livraria.autores.AutorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 import java.time.LocalDate;
 
@@ -37,7 +39,11 @@ class NovoLivroControllerTest extends SpringBootIntegrationTest {
                 "Sobre arquitetura java", "978-0-4703-2225-3", AUTOR.getId(), LocalDate.now());
 
         // ação
-        mockMvc.perform(POST("/api/livros", novoLivro))
+        mockMvc.perform(POST("/api/livros", novoLivro)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()
+                                .authorities(new SimpleGrantedAuthority("SCOPE_livraria:write"))
+                        )
+                )
                 .andExpect(status().isCreated())
                 .andExpect(redirectedUrlPattern("**/api/livros/*"))
         ;
@@ -52,7 +58,11 @@ class NovoLivroControllerTest extends SpringBootIntegrationTest {
         NovoLivroRequest livroInvalido = new NovoLivroRequest("", "", "", null, null);
 
         // ação
-        mockMvc.perform(POST("/api/livros", livroInvalido))
+        mockMvc.perform(POST("/api/livros", livroInvalido)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()
+                                .authorities(new SimpleGrantedAuthority("SCOPE_livraria:write"))
+                        )
+                )
                 .andExpect(status().isBadRequest())
         ;
 
@@ -71,7 +81,11 @@ class NovoLivroControllerTest extends SpringBootIntegrationTest {
                             existente.getIsbn(), AUTOR.getId(), LocalDate.now());
 
         // ação
-        mockMvc.perform(POST("/api/livros", livroInvalido))
+        mockMvc.perform(POST("/api/livros", livroInvalido)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()
+                                .authorities(new SimpleGrantedAuthority("SCOPE_livraria:write"))
+                        )
+                )
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(status().reason("livro com este ISBN já existente"))
         ;
